@@ -17,9 +17,10 @@ SET *set_criar() {
 
 bool set_pertence(SET *A, int elemento) {
     if (A != NULL) {
-        int tem = buscar(A->elementos, criar_item(elemento));
+        no_t *tem = buscar(A->elementos, criar_item(elemento));
 
-        return tem;
+
+        return tem != NULL;
     }
 
     return false;
