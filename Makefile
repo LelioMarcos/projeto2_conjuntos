@@ -4,7 +4,7 @@ BIN = ./conjunto
 
 all: conjunto
 
-conjunto: main.o item.o avl.o set.o
+conjunto: item.o avl.o set.o main.o
 	$(CC) $(FLAGS) *.o -o $(BIN)
 
 item.o: item.c item.h
