@@ -1,5 +1,5 @@
 CC = gcc
-FLAGS = -Wall -std=c99 -g
+FLAGS = -Wall -std=c99
 BIN = ./conjunto
 
 all: conjunto

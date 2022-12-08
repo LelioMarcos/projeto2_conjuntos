@@ -26,24 +26,6 @@ ab_t *arvore_criar() {
     return result;
 }
 
-int esta_vazia(ab_t* arvore) {
-    assert(arvore != NULL);
-    return arvore->raiz == NULL;
-}
-
-void finaliza(no_t *raiz) {
-    if (raiz != NULL) {
-        finaliza(raiz->esq);
-        finaliza(raiz->dir);
-        free(raiz);
-    }
-}
-
-void finalizar(ab_t *arvore) {
-    finaliza(arvore->raiz);
-    free(arvore);
-}
-
 void imprime_em_ordem(no_t *raiz) {
     if (raiz != NULL) {
         imprime_em_ordem(raiz->esq);
@@ -54,36 +36,6 @@ void imprime_em_ordem(no_t *raiz) {
 
 void imprimir(ab_t *arvore) {
     imprime_em_ordem(arvore->raiz);
-}
-
-void imprime_arvore(no_t *raiz) {
-    if (raiz != NULL) {
-        printf("%d", get_valor(raiz->info));
-        printf("(");
-        imprime_arvore(raiz->esq);
-        printf(",");
-        imprime_arvore(raiz->dir);
-        printf(")");
-    } else {
-        printf("_");
-    }
-}
-
-void imprimir2(ab_t *arvore) {
-    imprime_arvore(arvore->raiz);
-}
-
-int altura_no(no_t *raiz) {
-    if (raiz == NULL) return 0;
-
-    int alt_esq = 1 + altura_no(raiz->esq);
-    int alt_dir = 1 + altura_no(raiz->dir);
-
-    return max(alt_esq, alt_dir);
-}
-
-int altura(ab_t *arvore){
-    return altura_no(arvore->raiz);
 }
 
 no_t *busca(no_t *raiz, item_t *x) {
@@ -287,7 +239,8 @@ no_t *insere(no_t *raiz, item_t *x, int *flag) {
                 }
             }
         } else {
-            printf("O elemento já existe");
+            apagar_item(&x);
+            free(x);
         }
     } else {
         raiz = (no_t *)malloc(sizeof(no_t));
@@ -320,8 +273,10 @@ no_t *busca_remove(no_t *p, no_t *chave, int *flag) {
         set_valor(chave->info, get_valor(p->info));
         aux = p;
         p = p->esq;
+
         apagar_item(&(aux)->info);
         free(aux);
+
         *flag = 1; 
     }
 
@@ -332,7 +287,6 @@ no_t *remove_no(no_t* raiz, item_t *x, int *flag) {
     no_t *aux;
 
     if (raiz == NULL) {
-        printf("Chave nao encontrada");
         *flag = 0;
     } else if (get_valor(x) < get_valor(raiz->info)) {
         raiz->esq = remove_no(raiz->esq, x, flag);
@@ -348,14 +302,18 @@ no_t *remove_no(no_t* raiz, item_t *x, int *flag) {
         if (raiz->dir == NULL) {
             aux = raiz;
             raiz = raiz->esq;
+
             apagar_item(&(aux)->info);
             free(aux);
+            
             *flag = 1;
         }else if (raiz->esq == NULL) {
             aux = raiz;
             raiz = raiz->dir;
+            
             apagar_item(&(aux)->info);
             free(aux);
+            
             *flag = 1;
         } else {
             raiz->esq = busca_remove(raiz->esq, raiz, flag);
@@ -388,6 +346,28 @@ void destruir_raiz(no_t **raiz) {
         return;
     }
 }
+no_t *get_raiz (ab_t* A){
+    return A->raiz;
+}
+
+void insercao_em_ordem(no_t* A, ab_t **C){
+   if (A != NULL) {
+		inserir(*C, get_valor(A->info));
+
+	    insercao_em_ordem(A->esq, C);
+	    insercao_em_ordem(A->dir, C);
+	}
+}
+
+void interseccao_em_ordem(no_t* A, ab_t *B, ab_t **C){
+    if (A != NULL) {
+	    if(buscar(B, A->info)) inserir(*C, get_valor(A->info));
+        	
+	    interseccao_em_ordem(A->esq, B, C);
+	    interseccao_em_ordem(A->dir, B, C);
+	}
+}
+
 
 void destruir_arvore(ab_t **arvore) {
     if (*arvore != NULL) { 
